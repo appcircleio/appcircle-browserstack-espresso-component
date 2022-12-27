@@ -93,27 +93,21 @@ def check_status(build_id, test_timeout, username, access_key)
   end
 end
 
-runner_app = env_has_key('AC_UITESTS_RUNNER_PATH')
-ipa_path = env_has_key('AC_TEST_IPA_PATH')
-tmp_folder = env_has_key('AC_TEMP_DIR')
-runner_zip = "#{tmp_folder}/test_runner.zip"
-
-Dir.chdir(File.dirname(runner_app)) do
-  run_command("zip -r -D  #{runner_zip} #{File.basename(runner_app)}")
-end
+apk_path = env_has_key('AC_APK_PATH')
+test_apk_app = env_has_key('AC_TEST_APK_PATH')
 
 username = env_has_key('AC_BROWSERSTACK_USERNAME')
 access_key = env_has_key('AC_BROWSERSTACK_ACCESS_KEY')
 test_timeout = env_has_key('AC_BROWSERSTACK_TIMEOUT').to_i
 payload = env_has_key('AC_BROWSERSTACK_PAYLOAD')
 
-puts "Uploading IPA #{ipa_path}"
+puts "Uploading APK #{apk_path}"
 STDOUT.flush
-app_url = upload(ipa_path, APP_UPLOAD_ENDPOINT, username, access_key)[:app_url]
+app_url = upload(apk_path, APP_UPLOAD_ENDPOINT, username, access_key)[:app_url]
 puts "App uploaded. #{app_url}"
-puts "Uploading Test Runner #{runner_zip}"
+puts "Uploading Test APK #{test_apk_app}"
 STDOUT.flush
-test_suite_url = upload(runner_zip, TEST_SUITE_UPLOAD_ENDPOINT, username, access_key)[:test_suite_url]
+test_suite_url = upload(test_apk_app, TEST_SUITE_UPLOAD_ENDPOINT, username, access_key)[:test_suite_url]
 puts "Test uploaded. #{test_suite_url}"
 puts 'Starting a build'
 STDOUT.flush
