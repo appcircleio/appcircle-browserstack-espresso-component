@@ -12,4 +12,4 @@ Run your Espresso tests on BrowserStack App Automate
 
 ## Optional Inputs
 
-- `AC_BROWSERSTACK_PAYLOAD`: Build Payload. `AC_BROWSERSTACK_APP_URL` and `AC_BROWSERSTACK_TEST_URL` will be auto generated. Please check [documentation](https://www.browserstack.com/docs/app-automate/api-reference/xcuitest/builds#execute-a-build) for more details about the payload.
+- `AC_BROWSERSTACK_PAYLOAD`: Build Payload. `AC_BROWSERSTACK_APP_URL` and `AC_BROWSERSTACK_TEST_URL` will be auto generated. Please check [documentation](https://www.browserstack.com/docs/app-automate/api-reference/espresso/builds#execute-a-build) for more details about the payload.
