@@ -58,6 +58,22 @@ def build(payload, app_url, test_suite_url, username, access_key)
   end
 end
 
+def test_results(build_id, devices, username, access_key)
+  devices.each do |device|
+    uri = URI.parse("#{BROWSERSTACK_DOMAIN}#{APP_AUTOMATE_BUILD_STATUS_ENDPOINT}#{build_id}/sessions/#{device[:sessions][0][:id]}/report")
+    req = Net::HTTP::Get.new(uri.request_uri,
+                             { 'Content-Type' => 'application/xml' })
+    req.basic_auth(username, access_key)
+
+    res = Net::HTTP.start(uri.hostname, uri.port, use_ssl: true) do |http|
+      http.request(req)
+    end
+    file_name = "#{device[:device]}.xml"
+    output_file = File.join(ENV['AC_OUTPUT_DIR'], file_name)
+    File.write(output_file, res.body)
+  end
+end
+
 def check_status(build_id, test_timeout, username, access_key)
   if test_timeout <= 0
     puts('Plan timed out')
@@ -80,6 +96,7 @@ def check_status(build_id, test_timeout, username, access_key)
   status = response[:status]
   if status != 'running' && status != ''
     puts('Execution finished')
+    test_results(build_id, response[:devices], username, access_key) if response[:devices]
     if status == 'failed'
       puts('Test plan failed')
       exit(1)
