@@ -59,6 +59,8 @@ def build(payload, app_url, test_suite_url, username, access_key)
 end
 
 def test_results(build_id, devices, username, access_key)
+  test_report_folder = "#{ENV['AC_OUTPUT_DIR']}/test-results"
+  FileUtils.mkdir(test_report_folder) unless Dir.exist?(test_report_folder)
   devices.each do |device|
     uri = URI.parse("#{BROWSERSTACK_DOMAIN}#{APP_AUTOMATE_BUILD_STATUS_ENDPOINT}#{build_id}/sessions/#{device[:sessions][0][:id]}/report")
     req = Net::HTTP::Get.new(uri.request_uri,
@@ -69,8 +71,11 @@ def test_results(build_id, devices, username, access_key)
       http.request(req)
     end
     file_name = "#{device[:device]}.xml"
-    output_file = File.join(ENV['AC_OUTPUT_DIR'], file_name)
+    output_file = File.join(test_report_folder, file_name)
     File.write(output_file, res.body)
+  end
+  File.open(ENV['AC_ENV_FILE_PATH'], 'a') do |f|
+    f.puts "AC_TEST_RESULT_PATH=#{test_report_folder}"
   end
 end
 
